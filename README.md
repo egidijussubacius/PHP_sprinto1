@@ -1,5 +1,4 @@
 # PHP_sprinto1
-php
 
 -----===----- File manager program by Egidijus -----===-----
 
