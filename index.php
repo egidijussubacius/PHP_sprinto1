@@ -22,21 +22,29 @@
     }
 ?>
 
+
 <?php
 // file download 
-$file = './' . $_GET['path'] . $_POST['download']; ;
+
 if(isset($_POST['download'])){
+    $file = './' . $_GET['path'] . './' . $_POST['download']; 
+    // $path = "./" . $_GET['path'];
     // $file='./' . $_GET["path"] . $_POST['download'];
     $fileDown = str_replace("&nbsp;", " ", htmlentities($file, null, 'utf-8'));
+    print_r($fileDown);
+    print_r($file);
+    ob_clean();
+    ob_flush();
     header('Content-Description: File Transfer');
-    header('Content-Type: application/');
-    header('Content-Disposition: attachment; filename=' . urldecode($fileDown));
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename=' . basename($fileDown));
     header('Content-Transfer-Encoding: binary');
     header('Expires: 0');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
     header('Pragma: public');
     header('Content-Length: ' . filesize($fileDown));
-    flush();
+    // flush();
+    ob_end_flush();
     readfile($fileDown);
     exit;
 }
@@ -55,7 +63,7 @@ $path = "./" . $_GET['path'];
     }
 ?>
 <head>
-    <title>File manager E.S V1.0</title>
+    <title>File manager E.S v1.1</title>
     <link rel="stylesheet" href="main.css">
 </head>
 
@@ -102,7 +110,8 @@ $path = "./" . $_GET['path'];
 
             
         </div>
-    <h1>File manager Program</h1>
+    <h1>File manager Program </h1>
+    
    
 <form action="<?php $path ?>" method="POST" class="login1"  >
         <label for="name">Create new directory</label>
@@ -129,8 +138,8 @@ $dir_contents = scandir($path);
 echo("<table id='table'><thead><tr>
 <th>Type</th> 
 <th>Name</th> 
- <th>Actions(Delete)</th>
  <th>Actions(Download)</th>
+ <th>Actions(Delete)</th>
   </tr></thead>");
 echo("<tbody><tr>");
 
@@ -142,11 +151,17 @@ foreach ($dir_contents as $cont) {
         echo("<td>"  . $cont . "</td>");
     }
     if (is_file ($path . "/" . $cont)) {
-        echo ("<td>  <button id='mygtukasDEL'><a href='deleteFile.php?name=$cont' id='raides'> Delete</button>   </td>");
-        print '<td><form style="display: inline-block" action="" method="post">
-                <input type="hidden" name="download" value='.$cont.'>
-                <input class="middle" type="submit" value="Download">
-               </form></td>';
+        echo '<td><form style="display: inline-block" action="" method="post">
+        <input type="hidden" name="download" value='.$cont.'>
+        <input class="middle" type="submit" value="Download">
+       </form></td>';
+        if ($cont != "index.php") {
+            echo ("<td><button id='mygtukasDEL'><a id='raides' href='./?path=" . $_GET['path'] . "&file=" . $cont . "'>" . "Delete</a></button></td>");
+        } else {
+        
+            echo ("<td></td>");
+     
+        }
     } else {
         echo("<td></td>");
     }
