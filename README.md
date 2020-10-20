@@ -20,3 +20,8 @@ In the program you can: 1) create a new folder.
 4) Upload files
 5) Download files
 6) logging out after performing the desired actions
+
+
+V1.3 update
+
+Download (file with a space) bug fixed.
