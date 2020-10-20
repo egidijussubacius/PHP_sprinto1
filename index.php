@@ -22,33 +22,12 @@
     }
 ?>
 
+<head>
+    <title>File manager E.S v1.1</title>
+    <link rel="stylesheet" href="main.css">
+</head>
 
-<?php
-// file download 
-
-if(isset($_POST['download'])){
-    $file = './' . $_GET['path'] . './' . $_POST['download']; 
-    // $path = "./" . $_GET['path'];
-    // $file='./' . $_GET["path"] . $_POST['download'];
-    $fileDown = str_replace("&nbsp;", " ", htmlentities($file, null, 'utf-8'));
-    print_r($fileDown);
-    print_r($file);
-    ob_clean();
-    ob_flush();
-    header('Content-Description: File Transfer');
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: attachment; filename=' . basename($fileDown));
-    header('Content-Transfer-Encoding: binary');
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-    header('Pragma: public');
-    header('Content-Length: ' . filesize($fileDown));
-    // flush();
-    ob_end_flush();
-    readfile($fileDown);
-    exit;
-}
-?>
+<body>
 
 <?php
 //file upload
@@ -62,12 +41,34 @@ $path = "./" . $_GET['path'];
         move_uploaded_file($file_tmp,$file_store);
     }
 ?>
-<head>
-    <title>File manager E.S v1.1</title>
-    <link rel="stylesheet" href="main.css">
-</head>
 
-<body>
+<?php
+// file download 
+
+if (array_key_exists('action', $_GET)) {    
+    if (array_key_exists('file', $_GET)) {
+            $file = "./" . $_GET['path'] . "./" . $_GET['file'];
+        if ($_GET['action'] == 'trinti') {
+            unlink($path . "/" . $_GET['file']);
+        } elseif ($_GET['action'] == 'atsiusti') {
+            $fileDown = str_replace("&nbsp;", " ", htmlentities($file, null, 'utf-8'));
+            ob_clean();
+            ob_flush();
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename=' . basename($fileDown));
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($fileDown));
+            ob_end_flush();
+            readfile($fileDown);
+            exit;
+        }
+    }
+}
+?>
 
 <div>
          <?php
@@ -111,6 +112,9 @@ $path = "./" . $_GET['path'];
             
         </div>
     <h1>File manager Program </h1>
+
+
+
     
    
 <form action="<?php $path ?>" method="POST" class="login1"  >
@@ -127,19 +131,18 @@ $path = "./" . $_GET['path'];
             </form>
           
     <?php
-$path = "./" . $_GET['path'];
+$path = "." . $_GET['path'];
 if (isset($_POST['name'])) {
     mkdir($path . "/" . ($_POST['name']));
 }
-if (array_key_exists('file', $_GET)) {
-    unlink($path . "/" . $_GET['file']);
-}
+// if (array_key_exists('file', $_GET)) {
+//     unlink($path . "/" . $_GET['file']);
+// }
 $dir_contents = scandir($path);
 echo("<table id='table'><thead><tr>
 <th>Type</th> 
 <th>Name</th> 
- <th>Actions(Download)</th>
- <th>Actions(Delete)</th>
+ <th>Actions(Delete, Download)</th>
   </tr></thead>");
 echo("<tbody><tr>");
 
@@ -151,12 +154,8 @@ foreach ($dir_contents as $cont) {
         echo("<td>"  . $cont . "</td>");
     }
     if (is_file ($path . "/" . $cont)) {
-        echo '<td><form style="display: inline-block" action="" method="post">
-        <input type="hidden" name="download" value='.$cont.'>
-        <input class="middle" type="submit" value="Download">
-       </form></td>';
         if ($cont != "index.php") {
-            echo ("<td><button id='mygtukasDEL'><a id='raides' href='./?path=" . $_GET['path'] . "&file=" . $cont . "'>" . "Delete</a></button></td>");
+            echo ("<td><button id='mygtukasDEL'><a id='raides' href='./?path=" . $_GET['path'] . "&file=" . $cont . "&action=trinti" . "'>" . "Delete</a></button><button class='mygtukasDown'><a href='./?path=" . $_GET['path'] . "&file=" . $cont ."&action=atsiusti" . "'>" . "Download</a></button></td>");
         } else {
         
             echo ("<td></td>");
